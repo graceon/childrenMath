@@ -1,0 +1,48 @@
+@startuml
+Calculator <.. FractionNum
+
+
+
+
+
+Expression <.. FractionNum
+
+Expression <.. Operation
+Operation <.. Expression
+class FractionNum{
+* 无论是整数还是带分数还是真分数
+* 都可以用分子和分母实现统一的分数存储形式
+* 1.整数表示为分母为1的分数
+* 2.带分数表示内部表示为假分数，输出时检查是否要使用带分数表示
+* 3.普通分数直接采用分子分母存储
++ int numerator;//分子
++ int denominator;//分母
+
+* 两个数的四种运算(+,−,×,÷) 返回统一的分数存储形式
++ FractionNum add(FractionNum a,FractionNum b)
++ FractionNum sub(FractionNum a,FractionNum b)
++ FractionNum mul(FractionNum a,FractionNum b)
++ FractionNum div(FractionNum a,FractionNum b)
+* 带分数运算(比如 4’1/3 可以看成是 4 和 1/3 两个对象的一种运算) 返回统一的分数存储形式
++ FractionNum with(FractionNum a, FractionNum b)
+}
+
+class Expression{
++ FractionNum value;//表达式的拆分前的值
++ Operation operation;//表达式包含的操作符
++ boolean bracket;//表达式是否必须包含符号
++ Operation.type split(boolean end) \n 将没有运算符的表达式拆分成含有操作符和左右操作数的表达式 \n (end 为false时，分割后的表达式不可以继续拆分子表达式，\n 用于防止运算符超过3个以上，\n 如果end为true表示可以继续拆分 \n 返回分割后表达式的操作符，传递给上层表达式来生成括号)
+}
+
+class Calculator{
+- Stack<FractionNum> fractionNumStack//数字栈,用于存储表达式中的数值
+- Stack<Character> operationStack//符号栈,用于存储运算符和括号和带分数号
++ FractionNum calculate(String numStr) --> class FractionNum
+}
+
+class Operation{
++ enum type(add,sub,mul,div);//操作符类型
++ Expression left;//左表达式
++ Expression right;//右表达式
+}
+@enduml
